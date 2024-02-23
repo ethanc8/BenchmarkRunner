@@ -1,0 +1,12 @@
+name: BenchmarkRunner
+channels:
+  - conda-forge
+  - nodefaults
+  - pytorch
+dependencies:
+  - python
+  - opencv
+  - py-opencv
+  - pytorch
+  - torchvision
+  - cpuonly

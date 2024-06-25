@@ -8,7 +8,7 @@ import os
 class ResNet50(Model):
     @classmethod
     def getPretrained(self) -> backends.Net:
-        return models.resnet50(pretrained=True)
+        return backends.pytorch.Net(models.resnet50(pretrained=True))
 
     @classmethod
     def convertToDiskFormat(self, diskFormat: DiskFormat, torchModel: backends.pytorch.Net, filename: str = "resnet50.onnx"):
@@ -20,7 +20,7 @@ class ResNet50(Model):
 
             # model export into ONNX format
             torch.onnx.export(
-                torchModel,
+                torchModel.net,
                 generated_input,
                 filename,
                 verbose=True,

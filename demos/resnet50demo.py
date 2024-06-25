@@ -1,8 +1,5 @@
 import sys
 import os
-from pathlib import Path
-sys.path.append(Path(os.path.dirname(os.path.realpath(__file__))).parent)
-
 import solInfer as solInfer
 from solInfer.models.resnet50 import ResNet50
 import cv2
@@ -41,7 +38,8 @@ if __name__ == "__main__":
     imagenet_labels = ResNet50.loadImagenetLabelsFromFile("data/classification_classes_ILSVRC2012.txt")
 
     # Convert the model to ONNX and load it with OpenCV DNN
-    onnx_filename = ResNet50.convertToDiskFormat(solInfer.models.diskFormats.ONNX)
+    os.makedirs("tmp/", exist_ok=True)
+    onnx_filename = ResNet50.convertToDiskFormat(solInfer.models.diskFormats.ONNX, torch_model, "tmp/resnet50.onnx")
     cv_model = solInfer.backends.cvDNN.Net.loadONNX(onnx_filename)
 
     input_img = get_preprocessed_img("data/squirrel_cls.jpg")

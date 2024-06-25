@@ -10,12 +10,12 @@ class Net(backends.Net):
     def __init__(self, net: cv2.dnn.Net):
         self.net = net
 
-    @staticmethod
+    @classmethod
     def loadONNX(self, filename: str) -> cv2.dnn.Net:
         return Net(cv2.dnn.readNetFromONNX(filename))
 
     def forwardPass(self, inputTensor: backends.Tensor) -> backends.Tensor:
-        self.net.setInput(inputTensor.to_ndarray())
+        self.net.setInput(inputTensor.get_ndarray())
         return backends.NPTensor(self.net.forward())
 
 Backend = Backend_class()

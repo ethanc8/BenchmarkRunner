@@ -39,6 +39,13 @@ If you modify `environment.yml`, please run
 mamba env update -f environment-cpu.yml
 ```
 
+## Installing this package in editable state
+
+Just do:
+```bash
+pip install -e src
+```
+
 ## Convolutional neural networks
 
 ### Inference frameworks

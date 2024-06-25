@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-from src.models.common import *
+from solInfer.models.common import *
 from torchvision import models
-from src import backends
+from solInfer import backends
 import torch
 import os
 

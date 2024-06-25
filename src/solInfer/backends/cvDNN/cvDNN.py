@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-from src import backends
+from solInfer import backends
 import cv2
 
 class Backend_class(backends.Backend):

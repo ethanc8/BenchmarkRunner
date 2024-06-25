@@ -1,5 +1,10 @@
-import src as solInfer
-from src.models.resnet50 import ResNet50
+import sys
+import os
+from pathlib import Path
+sys.path.append(Path(os.path.dirname(os.path.realpath(__file__))).parent)
+
+import solInfer as solInfer
+from solInfer.models.resnet50 import ResNet50
 import cv2
 import numpy as np
 

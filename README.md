@@ -1,3 +1,4 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 # BenchmarkRunner
 
 This repository contains scripts that run benchmarks of various neural network models and inference frameworks.

@@ -1,2 +1,3 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-ONNX = Format("ONNX", ".onnx")
+from src.models.common.Format import DiskFormat
+ONNX = DiskFormat("ONNX", ".onnx")

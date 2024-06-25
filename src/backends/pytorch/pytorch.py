@@ -11,14 +11,17 @@ class Tensor(backends.Tensor):
     
     ## Utility methods ##
 
-    def argmax(self): pass
+    def argmax(self):
+        return torch.argmax(self.data, axis=1).item()
 
     # get_ conversion methods are O(1) and are fast. They return a different view
     # on the same memory.
-    def get_ndarray(self): pass
+    def get_ndarray(self):
+        return self.data.numpy(force=False)
 
     # to_ conversion methods can be O(n) or otherwise be slow
-    def to_ndarray(self): pass
+    def to_ndarray(self):
+        return self.data.numpy(force=True)
 
     ## Begin passthrough ##
 

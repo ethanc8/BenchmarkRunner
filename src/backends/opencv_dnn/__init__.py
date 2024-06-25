@@ -1,1 +1,1 @@
-from OpenCVDNN import *
+from cvDNN import *

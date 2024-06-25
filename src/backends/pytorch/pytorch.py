@@ -1,9 +1,14 @@
-import numpy as np
+from .. import common as backends
+import torch
 
-class Tensor:
+class Backend_class(backends.Backend):
     def __init__(self):
         pass
 
+class Tensor(backends.Tensor):
+    def __init__(self, data: torch.Tensor):
+        self.data = data
+    
     ## Utility methods ##
 
     def argmax(self): pass
@@ -14,23 +19,6 @@ class Tensor:
 
     # to_ conversion methods can be O(n) or otherwise be slow
     def to_ndarray(self): pass
-
-    # copy_ conversion methods are always O(n) and always copy the memory.
-    def copy_ndarray(self): pass
-
-
-class NPTensor(Tensor):
-    def __init__(self, data: np.ndarray):
-        self.data = data
-
-    ## Utility methods ##
-
-    def argmax(self):
-        return np.argmax(self.data)
-
-    # Conversions
-    def get_ndarray(self): return self.data
-    def to_ndarray(self): return self.data
 
     ## Begin passthrough ##
 
@@ -85,3 +73,14 @@ class NPTensor(Tensor):
     def __iand__(self): return self.data.__iand__(self)
     def __ixor__(self): return self.data.__ixor__(self)
     def __ior__(self): return self.data.__ior__(self)
+
+class Net(backends.Net):
+    # TODO: Figure out what torch.ResNet is a subclass of
+    def __init__(self, net: object):
+        self.net = net
+
+    def forwardPass(self, inputTensor: backends.Tensor) -> backends.Tensor:
+        self.net.setInput(inputTensor.to_ndarray())
+        return Tensor(self.net.forward())
+
+Backend = Backend_class()

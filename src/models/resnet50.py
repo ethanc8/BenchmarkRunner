@@ -1,12 +1,15 @@
 from common import *
 from torchvision import models
+from .. import backends
 import torch
 import os
 
 class ResNet50(Model):
-    def __init__(self):
-        self.torchModel = models.resnet50(pretrained=True)
+    @staticmethod
+    def getPretrainedTorchModelNet() -> backends.pytorch.Net:
+        models.resnet50(pretrained=True)
 
+    @staticmethod
     def convertTo(self, format: Format, filename: str = "resnet50.onnx"):
         if format == formats.ONNX:
             # generate model input
@@ -28,7 +31,14 @@ class ResNet50(Model):
             return filename
         else:
             return None
-        
-    def getTorchModel(self):
-        return self.torchModel
+    
+    def loadImagenetLabelsFromFile(self, labels_path) -> list[str]:
+        with open(labels_path) as f:
+            self.imagenet_labels = [line.strip() for line in f.readlines()]
+
+    def infer(self, net: backends.Net) -> dict:
+        out = net.forwardPass()
+
+
+
         

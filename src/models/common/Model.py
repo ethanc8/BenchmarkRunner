@@ -1,2 +1,6 @@
+from .. import backends
+
 class Model:
-    pass
+    def __init__(self):
+        self.backend: backends.Backend = None
+        self.net: backends.Net = None

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-from .. import backends
+from src import backends
 
 class Model:
     def __init__(self):

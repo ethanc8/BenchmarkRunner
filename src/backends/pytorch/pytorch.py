@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-from .. import common as backends
+from src import backends
 import torch
 
 class Backend_class(backends.Backend):

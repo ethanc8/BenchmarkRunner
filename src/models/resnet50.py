@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-from common import *
+from src.models.common import *
 from torchvision import models
-from .. import backends
+from src import backends
 import torch
 import os
 

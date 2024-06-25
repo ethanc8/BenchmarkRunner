@@ -5,12 +5,12 @@ import torch
 import os
 
 class ResNet50(Model):
-    @staticmethod
-    def getPretrained() -> backends.Net:
+    @classmethod
+    def getPretrained(self) -> backends.Net:
         return models.resnet50(pretrained=True)
 
-    @staticmethod
-    def convertToDiskFormat(diskFormat: DiskFormat, torchModel: backends.pytorch.Net, filename: str = "resnet50.onnx"):
+    @classmethod
+    def convertToDiskFormat(self, diskFormat: DiskFormat, torchModel: backends.pytorch.Net, filename: str = "resnet50.onnx"):
         if diskFormat == diskFormats.ONNX:
             # generate model input
             generated_input = torch.autograd.Variable(
@@ -32,15 +32,27 @@ class ResNet50(Model):
         else:
             return None
     
-    @staticmethod
-    def loadImagenetLabelsFromFile(labels_path) -> list[str]:
+    @classmethod
+    def loadImagenetLabelsFromFile(self, labels_path) -> list[str]:
         with open(labels_path) as f:
             imagenet_labels = [line.strip() for line in f.readlines()]
         return imagenet_labels
 
-    @staticmethod
-    def infer(net: backends.Net) -> dict:
+    @classmethod
+    def infer(self, net: backends.Net, imagenet_labels: list[str] = None) -> dict:
         out = net.forwardPass()
+
+        imagenet_class_id = out.argmax()
+        confidence = out[0][imagenet_class_id]
+
+        retval = {
+            "imagenet_class_id": imagenet_class_id,
+            "confidence": confidence
+        }
+        if imagenet_labels is not None:
+            retval["imagenet_class_label"] = imagenet_labels[imagenet_class_id]
+        
+        return retval
 
 
 

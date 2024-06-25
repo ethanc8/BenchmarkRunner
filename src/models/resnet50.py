@@ -6,12 +6,12 @@ import os
 
 class ResNet50(Model):
     @staticmethod
-    def getPretrainedTorchModelNet() -> backends.pytorch.Net:
-        models.resnet50(pretrained=True)
+    def getPretrained() -> backends.Net:
+        return models.resnet50(pretrained=True)
 
     @staticmethod
-    def convertTo(self, format: Format, filename: str = "resnet50.onnx"):
-        if format == formats.ONNX:
+    def convertToDiskFormat(diskFormat: DiskFormat, torchModel: backends.pytorch.Net, filename: str = "resnet50.onnx"):
+        if diskFormat == diskFormats.ONNX:
             # generate model input
             generated_input = torch.autograd.Variable(
                 torch.randn(1, 3, 224, 224)
@@ -19,7 +19,7 @@ class ResNet50(Model):
 
             # model export into ONNX format
             torch.onnx.export(
-                self.torchModel,
+                torchModel,
                 generated_input,
                 filename,
                 verbose=True,
@@ -32,12 +32,16 @@ class ResNet50(Model):
         else:
             return None
     
-    def loadImagenetLabelsFromFile(self, labels_path) -> list[str]:
+    @staticmethod
+    def loadImagenetLabelsFromFile(labels_path) -> list[str]:
         with open(labels_path) as f:
-            self.imagenet_labels = [line.strip() for line in f.readlines()]
+            imagenet_labels = [line.strip() for line in f.readlines()]
+        return imagenet_labels
 
-    def infer(self, net: backends.Net) -> dict:
+    @staticmethod
+    def infer(net: backends.Net) -> dict:
         out = net.forwardPass()
+
 
 
 

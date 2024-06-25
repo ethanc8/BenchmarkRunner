@@ -1,3 +1,3 @@
 from Model import *
 from Format import *
-import formats
+import src.models.common.diskFormats as diskFormats

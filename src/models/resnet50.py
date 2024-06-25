@@ -40,8 +40,8 @@ class ResNet50(Model):
         return imagenet_labels
 
     @classmethod
-    def infer(self, net: backends.Net, imagenet_labels: list[str] = None) -> dict:
-        out = net.forwardPass()
+    def infer(self, net: backends.Net, input_img: backends.Tensor, imagenet_labels: list[str] = None) -> dict:
+        out = net.forwardPass(input_img)
 
         imagenet_class_id = out.argmax()
         confidence = out[0][imagenet_class_id]

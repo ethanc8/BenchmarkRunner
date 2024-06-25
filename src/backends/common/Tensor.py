@@ -23,6 +23,15 @@ class NPTensor(Tensor):
     def __init__(self, data: np.ndarray):
         self.data = data
 
+    ## Indexing ##
+
+    def __getitem__(self, key):
+        res = self.data[key]
+        if isinstance(res, np.ndarray):
+            return NPTensor(res)
+        else:
+            return res
+
     ## Utility methods ##
 
     def argmax(self):

@@ -91,11 +91,11 @@ class Tensor(backends.Tensor):
     def __ior__(self): return self.data.__ior__(self)
 
 class Net(backends.Net):
-    # TODO: Figure out what torch.ResNet is a subclass of
-    def __init__(self, net: object):
+    def __init__(self, net: torch.nn.Module):
         self.net = net
 
     def forwardPass(self, inputTensor: backends.Tensor) -> backends.Tensor:
+        self.net.eval()
         with torch.no_grad():
             return Tensor(self.net(torch.from_numpy(inputTensor.get_ndarray())))
     

@@ -45,9 +45,11 @@ if __name__ == "__main__":
     input_img = get_preprocessed_img("data/squirrel_cls.jpg")
 
     # Run with OpenCV DNN
+    print("Inferring with OpenCV DNN...")
     result = ResNet50.infer(cv_model, input_img, imagenet_labels)
     print(result)
 
     # Run with PyTorch DNN
+    print("Inferring with PyTorch...")
     result = ResNet50.infer(torch_model, input_img, imagenet_labels)
     print(result)

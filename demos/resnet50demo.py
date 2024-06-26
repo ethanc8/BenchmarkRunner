@@ -34,12 +34,12 @@ def get_preprocessed_img(img_path: str) -> solInfer.backends.Tensor:
 
 if __name__ == "__main__":
     # Get the ResNet50 model and the imagenet labels
-    torch_model = ResNet50.getPretrained()
-    imagenet_labels = ResNet50.loadImagenetLabelsFromFile("data/classification_classes_ILSVRC2012.txt")
+    torch_model = ResNet50.get_pretrained()
+    imagenet_labels = ResNet50.load_imagenet_labels_from_file("data/classification_classes_ILSVRC2012.txt")
 
     # Convert the model to ONNX and load it with OpenCV DNN
     os.makedirs("tmp/", exist_ok=True)
-    onnx_filename = ResNet50.convertToDiskFormat(solInfer.models.diskFormats.ONNX, torch_model, "tmp/resnet50.onnx")
+    onnx_filename = ResNet50.convert_to_disk_format(solInfer.models.diskFormats.ONNX, torch_model, "tmp/resnet50.onnx")
     cv_model = solInfer.backends.cvDNN.Net.loadONNX(onnx_filename)
 
     input_img = get_preprocessed_img("data/squirrel_cls.jpg")

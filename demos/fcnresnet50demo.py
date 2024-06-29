@@ -44,7 +44,7 @@ def read_colors_info(filename):
         for line in f.readlines():
             name, r, g, b = line.split()
             pascal_voc_classes.append(name)
-            pascal_voc_classes.append((r, g, b))
+            pascal_voc_colors.append((r, g, b))
     return pascal_voc_classes, pascal_voc_colors
 
 # def get_colored_mask(img_shape, segm_mask, pascal_voc_colors):
@@ -79,12 +79,18 @@ def get_colored_mask(img_shape, prediction, pascal_voc_colors):
     h, w = predicted_classes.shape[:2]
     colored_mask = np.zeros((h, w, 3), dtype=np.uint8)
 
-    # Assign colors based on predicted_classes and pascal_voc_colors
-    for class_index in range(len(pascal_voc_colors)):
-        # Get all pixels where predicted_classes == class_index
-        mask = predicted_classes == class_index
-        # Assign the corresponding color to all these pixels
-        colored_mask[mask] = pascal_voc_colors[class_index]
+    for x in range(img_width):
+        for y in range(img_height):
+            colored_mask[y,x] = pascal_voc_colors[predicted_classes[y,x]]
+
+    # # Assign colors based on predicted_classes and pascal_voc_colors
+    # for class_index in range(len(pascal_voc_colors)):
+    #     # Get all pixels where predicted_classes == class_index
+    #     mask = predicted_classes == class_index
+    #     # Assign the corresponding color to all these pixels
+    #     colored_mask[mask] = pascal_voc_colors[class_index]
+
+    # note: these should probably work the same, but I'm just keeping both options just in case.
 
     return colored_mask
 

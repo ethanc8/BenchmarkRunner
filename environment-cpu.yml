@@ -12,6 +12,7 @@ dependencies:
   - cpuonly
   - onnx
   - tensorflow
+  - keras_applications
   # We don't like conda-forge's opencv packages, because they don't include
   # type stubs
   - pip:

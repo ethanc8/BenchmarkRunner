@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # Convert the model to ONNX and load it with OpenCV DNN
     os.makedirs("tmp/", exist_ok=True)
-    onnx_filename = FCNResNet50.convert_to_disk_format(solInfer.models.disk_formats.ONNX, torch_model, "tmp/resnet50.onnx", image_size=img.shape)
+    onnx_filename = FCNResNet50.convert_to_disk_format(solInfer.models.disk_formats.ONNX, torch_model, "tmp/fcn_resnet50.onnx", image_size=img.shape)
     cv_model = solInfer.backends.cvDNN.Net.loadONNX(onnx_filename)
      
     pascal_voc_classes, pascal_voc_colors = read_colors_info("data/pascal-classes.txt")

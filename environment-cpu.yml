@@ -6,9 +6,13 @@ channels:
   - pytorch
 dependencies:
   - python
-  - opencv
-  - py-opencv
+  - pip
   - pytorch
   - torchvision
   - cpuonly
   - onnx
+  - tensorflow
+  # We don't like conda-forge's opencv packages, because they don't include
+  # type stubs
+  - pip:
+    - opencv-python

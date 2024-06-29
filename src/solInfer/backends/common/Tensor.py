@@ -9,6 +9,16 @@ class Tensor:
 
     def argmax(self): pass
 
+    # Equivalent to numpy.transpose and torch.permute
+    def permute(self, dims): pass
+
+    ## Basic data ##
+    
+    @property
+    def shape(self): pass
+
+    ## Conversions ##
+
     # get_ conversion methods are O(1) and are fast. They return a different view
     # on the same memory.
     def get_ndarray(self): pass
@@ -44,8 +54,17 @@ class NPTensor(Tensor):
 
     def argmax(self, axis=None, keepdim=False):
         return np.argmax(self.data, axis=axis, keepdims=keepdim)
+    
+    def permute(self, dims):
+        return self.data.transpose(*dims)
 
-    # Conversions
+    ## Basic data ##
+    
+    @property
+    def shape(self):
+        return self.data.shape
+
+    ## Conversions ##
     def get_ndarray(self): return self.data
     def to_ndarray(self): return self.data
 

@@ -14,8 +14,10 @@ class FCNResNet50(Model):
     def convert_to_disk_format(self, disk_format: DiskFormat, pytorch_net: backends.pytorch.Net, filename: str = "resnet50.onnx"):
         if disk_format == disk_formats.ONNX:
             # generate model input
+            # TODO: Figure out how to deal with images that are not 366x500px, without having to pass in image size
+            # before generating the ONNX file
             generated_input = torch.autograd.Variable(
-                torch.randn(1, 3, 500, 500)
+                torch.randn(1, 3, 366, 500)
             )
 
             # model export into ONNX format
@@ -36,11 +38,12 @@ class FCNResNet50(Model):
     @classmethod
     def infer(self, net: backends.Net, input_img: backends.Tensor) -> dict:
         out = net.forwardPass(input_img)
-        # print(f"out: {out.data}")
-        print(f"shape: {out.data.shape}")
-        predictions = out.argmax(axis=0)
-        print(f"predictions shape: {predictions.data.shape}")
-        return predictions
+        # Postprocess the output
+        # (batch_size == 1, num_classes, height, width) -> (1, height, width, num_classes)
+        out = out.permute((0, 2, 3, 1))
+        # (1, height, width, num_classes) -> (height, width)
+        seg_map = out.argmax(axis=3)[0]
+        return seg_map
 
 
 

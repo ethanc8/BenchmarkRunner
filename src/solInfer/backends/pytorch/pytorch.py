@@ -30,6 +30,17 @@ class Tensor(backends.Tensor):
 
     def argmax(self, axis=None, keepdim=False):
         return torch.argmax(self.data, dim=axis, keepdim=keepdim)
+    
+    def permute(self, dims):
+        return torch.permute(self.data, dims)
+
+    ## Basic data ##
+    
+    @property
+    def shape(self):
+        return self.data.shape
+    
+    ## Conversions ##
 
     # get_ conversion methods are O(1) and are fast. They return a different view
     # on the same memory.

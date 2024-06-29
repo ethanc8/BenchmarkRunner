@@ -101,7 +101,11 @@ class Net(backends.Net):
     def forwardPass(self, inputTensor: backends.Tensor) -> backends.Tensor:
         self.net.eval()
         with torch.no_grad():
-            return Tensor(self.net(torch.from_numpy(inputTensor.get_ndarray())))
+            out = self.net(torch.from_numpy(inputTensor.get_ndarray()))
+        if isinstance(out, torch.Tensor):
+            return Tensor(out)
+        elif isinstance(out, dict):
+            return Tensor(out['out'])
     
 
 Backend = Backend_class()

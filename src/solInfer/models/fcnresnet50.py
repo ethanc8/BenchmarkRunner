@@ -8,7 +8,7 @@ import os
 class FCNResNet50(Model):
     @classmethod
     def get_pretrained(self) -> backends.Net:
-        return backends.pytorch.Net(models.fcn_resnet50(pretrained=True))
+        return backends.pytorch.Net(models.segmentation.fcn_resnet50(pretrained=True))
 
     @classmethod
     def convert_to_disk_format(self, disk_format: DiskFormat, pytorch_net: backends.pytorch.Net, filename: str = "resnet50.onnx"):
@@ -32,19 +32,15 @@ class FCNResNet50(Model):
             return filename
         else:
             return None
-    
-    @classmethod
-    def load_imagenet_labels_from_file(self, labels_path) -> list[str]:
-        with open(labels_path) as f:
-            imagenet_labels = [line.strip() for line in f.readlines()]
-        return imagenet_labels
 
     @classmethod
-    def infer(self, net: backends.Net, input_img: backends.Tensor, imagenet_labels: list[str] = None) -> dict:
+    def infer(self, net: backends.Net, input_img: backends.Tensor) -> dict:
         out = net.forwardPass(input_img)
+        # print(f"out: {out.data}")
         print(f"shape: {out.data.shape}")
         predictions = out.argmax(axis=0)
-        return None
+        print(f"predictions shape: {predictions.data.shape}")
+        return predictions
 
 
 

@@ -31,7 +31,7 @@ def postprocess(output):
     return output_predictions.byte().cpu().numpy()
 
 # Export the model to ONNX format
-dummy_input = torch.randn(1, 3, 256, 256)
+dummy_input = torch.randn(1, 3, 500, 500)
 torch.onnx.export(model, dummy_input, "tmp/fcn_resnet50.onnx", verbose=True, opset_version=11)
 
 # Load the ONNX model in OpenCV
@@ -39,14 +39,17 @@ net = cv.dnn.readNetFromONNX('tmp/fcn_resnet50.onnx')
 
 # Load and preprocess the image
 image = cv.imread('data/2007_000033.jpg')
-blob = cv.dnn.blobFromImage(image, scalefactor=1/255.0, size=(256, 256), mean=(0.485, 0.456, 0.406), swapRB=True, crop=False)
+blob = cv.dnn.blobFromImage(image, scalefactor=1/255.0, size=(500, 500), mean=np.array([0.485, 0.456, 0.406]) * 255.0, swapRB=True, crop=False)
+blob[0] /= np.asarray([0.229, 0.224, 0.225], dtype=np.float32).reshape(3, 1, 1)
 net.setInput(blob)
 
 # Run forward pass
 out = net.forward()
 
 # Postprocess the output
+# (batch_size == 1, num_classes, height, width) -> (1, height, width, num_classes)
 out = out.transpose(0, 2, 3, 1)
+# (1, height, width, num_classes) -> (height, width)
 seg_map = np.argmax(out, axis=3)[0]
 
 # Map each label to a color
@@ -64,8 +67,13 @@ seg_width = seg_image.shape[1]
 seg_height = seg_image.shape[0]
 img_width = image.shape[1]
 img_height = image.shape[0]
-print(f"seg {seg_width} {seg_height}")
-print(f"img {img_width} {img_height}")
+blob_width = blob.shape[1]
+blob_height = blob.shape[0]
+print(f" seg {seg_width} {seg_height}")
+print(f" img {img_width} {img_height}")
+print(f"blob {blob_width} {blob_height}")
+# OpenCV pads the bottom and right more than the top and left if the top and bottom have
+# different padding, when doing blobFromImage, so we'll do the same here.
 resized_img = cv.copyMakeBorder(src=image,
                                 top=(seg_height - img_height)//2,
                                 bottom=ceildiv((seg_height - img_height),2),
@@ -74,11 +82,11 @@ resized_img = cv.copyMakeBorder(src=image,
                                 borderType=cv.BORDER_CONSTANT,
                                 value=(0,0,0),
                                )
-# alpha = 0.5
-# blended = cv.addWeighted(image, alpha, seg_image, 1 - alpha, 0)
+alpha = 0.5
+blended = cv.addWeighted(resized_img, alpha, seg_image, 1 - alpha, 0)
 
 # Save and display the result
 # cv.imwrite('segmentation_result.png', blended)
-cv.imshow('Segmentation', seg_image)
+cv.imshow('Segmentation', blended)
 cv.waitKey(0)
 cv.destroyAllWindows()

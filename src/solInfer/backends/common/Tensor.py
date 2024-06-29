@@ -35,8 +35,15 @@ class NPTensor(Tensor):
 
     ## Utility methods ##
 
-    def argmax(self):
-        return np.argmax(self.data)
+    @staticmethod
+    def scalarize_or_tensorize(res):
+        if res.size == 1:
+            return res.item()
+        else:
+            return NPTensor(res)
+
+    def argmax(self, axis=None, keepdim=False):
+        return np.argmax(self.data, axis=axis, keepdims=keepdim)
 
     # Conversions
     def get_ndarray(self): return self.data

@@ -15,17 +15,21 @@ class Tensor(backends.Tensor):
     def __getitem__(self, key):
         res = self.data[key]
         if isinstance(res, torch.Tensor):
-            if torch.numel(res) == 1:
-                return res.item()
-            else:
-                return Tensor(res)
+            return self.scalarize_or_tensorize(res)
         else:
             return res
 
     ## Utility methods ##
 
-    def argmax(self):
-        return torch.argmax(self.data, axis=1).item()
+    @staticmethod
+    def scalarize_or_tensorize(res):
+        if torch.numel(res) == 1:
+            return res.item()
+        else:
+            return Tensor(res)
+
+    def argmax(self, axis=None, keepdim=False):
+        return torch.argmax(self.data, dim=axis, keepdim=keepdim)
 
     # get_ conversion methods are O(1) and are fast. They return a different view
     # on the same memory.

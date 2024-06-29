@@ -8,8 +8,8 @@ import numpy as np
 def get_preprocessed_img(img_path: str) -> solInfer.backends.Tensor:
     # read the image
     input_img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+    img = input_img
     input_img = input_img.astype(np.float32)
-
     input_img = cv2.resize(input_img, (256, 256))
 
     # define preprocess parameters
@@ -30,19 +30,19 @@ def get_preprocessed_img(img_path: str) -> solInfer.backends.Tensor:
     )
     # 3. divide by std
     input_blob[0] /= np.asarray(std, dtype=np.float32).reshape(3, 1, 1)
-    return solInfer.backends.NPTensor(input_blob)
+    return img, solInfer.backends.NPTensor(input_blob)
 
 if __name__ == "__main__":
     # Get the ResNet50 model and the imagenet labels
     torch_model = ResNet50.get_pretrained()
     imagenet_labels = ResNet50.load_imagenet_labels_from_file("data/classification_classes_ILSVRC2012.txt")
 
+    img, input_img = get_preprocessed_img("data/squirrel_cls.jpg")
+
     # Convert the model to ONNX and load it with OpenCV DNN
     os.makedirs("tmp/", exist_ok=True)
-    onnx_filename = ResNet50.convert_to_disk_format(solInfer.models.disk_formats.ONNX, torch_model, "tmp/resnet50.onnx")
+    onnx_filename = ResNet50.convert_to_disk_format(solInfer.models.disk_formats.ONNX, torch_model, "tmp/resnet50.onnx", image_size=img.shape)
     cv_model = solInfer.backends.cvDNN.Net.loadONNX(onnx_filename)
-
-    input_img = get_preprocessed_img("data/squirrel_cls.jpg")
 
     # Run with OpenCV DNN
     print("Inferring with OpenCV DNN...")

@@ -16,7 +16,7 @@ import numpy as np
 def ceildiv(n, d):
     return -(n // -d)
 
-def get_processed_imgs(img_path: str):
+def get_processed_img(img_path: str):
     # read the image
     input_img = cv.imread(img_path, cv.IMREAD_COLOR)
     img = input_img
@@ -64,39 +64,20 @@ def get_colored_seg_image(seg_map, pascal_voc_colors):
     return seg_image
 
 def blend_images(seg_image, image):
-    seg_width = seg_image.shape[1]
-    seg_height = seg_image.shape[0]
-    img_width = image.shape[1]
-    img_height = image.shape[0]
-    blob_width = blob.shape[1]
-    blob_height = blob.shape[0]
-    print(f" seg {seg_width} {seg_height}")
-    print(f" img {img_width} {img_height}")
-    print(f"blob {blob_width} {blob_height}")
-    # OpenCV pads the bottom and right more than the top and left if the top and bottom have
-    # different padding, when doing blobFromImage, so we'll do the same here.
-    resized_img = cv.copyMakeBorder(src=image,
-                                    top=(seg_height - img_height)//2,
-                                    bottom=ceildiv((seg_height - img_height),2),
-                                    left=(seg_width - img_width)//2,
-                                    right=ceildiv((seg_width - img_width),2),
-                                    borderType=cv.BORDER_CONSTANT,
-                                    value=(0,0,0),
-                                )
     alpha = 0.5
-    blended = cv.addWeighted(resized_img, alpha, seg_image, 1 - alpha, 0)
+    blended = cv.addWeighted(image, alpha, seg_image, 1 - alpha, 0)
     return blended
 
 if __name__ == "__main__":
     # Get the ResNet50 model and the imagenet labels
     torch_model = FCNResNet50.get_pretrained()
 
+    img, blob = get_processed_img("data/2007_000033.jpg")
+
     # Convert the model to ONNX and load it with OpenCV DNN
     os.makedirs("tmp/", exist_ok=True)
-    onnx_filename = FCNResNet50.convert_to_disk_format(solInfer.models.disk_formats.ONNX, torch_model, "tmp/resnet50.onnx")
+    onnx_filename = FCNResNet50.convert_to_disk_format(solInfer.models.disk_formats.ONNX, torch_model, "tmp/resnet50.onnx", image_size=img.shape)
     cv_model = solInfer.backends.cvDNN.Net.loadONNX(onnx_filename)
-
-    img, blob = get_processed_imgs("data/2007_000033.jpg")
      
     pascal_voc_classes, pascal_voc_colors = read_colors_info("data/pascal-classes.txt")
 

@@ -11,11 +11,11 @@ class ResNet50(Model):
         return backends.pytorch.Net(models.resnet50(pretrained=True))
 
     @classmethod
-    def convert_to_disk_format(self, disk_format: DiskFormat, pytorch_net: backends.pytorch.Net, filename: str = "resnet50.onnx"):
+    def convert_to_disk_format(self, disk_format: DiskFormat, pytorch_net: backends.pytorch.Net, filename: str = "resnet50.onnx", image_size=(256, 256)):
         if disk_format == disk_formats.ONNX:
             # generate model input
             generated_input = torch.autograd.Variable(
-                torch.randn(1, 3, 224, 224)
+                torch.randn(1, 3, image_size[0], image_size[1])
             )
 
             # model export into ONNX format

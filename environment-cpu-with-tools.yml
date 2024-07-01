@@ -18,3 +18,4 @@ dependencies:
   # type stubs
   - pip:
     - opencv-python
+    - ai-edge-model-explorer
